@@ -34,7 +34,7 @@ public class Board extends JPanel implements ActionListener {
 	private int cake_Y;
 	private int cake_X;
 	private int score = 0;
-	private int cakeCounter = 5;
+	private int cakeCounter = 0;
 
 	private Image bodyImage, appleImage, cakeImage, headImage;
 
@@ -44,6 +44,7 @@ public class Board extends JPanel implements ActionListener {
 	private boolean downDirection = false;
 	private boolean inGame = true;
 	private boolean cakeExist;
+	private boolean paused = false;
 
 	private Timer timer;
 
@@ -101,7 +102,19 @@ public class Board extends JPanel implements ActionListener {
 	private void doDrawing(Graphics g) {
 		if (inGame) {
 			g.drawImage(appleImage, apple_X, apple_Y, this);
-			g.drawImage(cakeImage, cake_X, cake_Y, this);
+			
+			//To show in game score
+			Font smallScore = new Font("Helvetica", Font.BOLD, 14);
+			FontMetrics scoreMetr = getFontMetrics(smallScore);
+			g.setColor(Color.GRAY);
+			String inGameScore = "Your score: " + score;
+			g.drawString(inGameScore, (20),
+					(20));
+			
+			//
+			if (cakeExist) {
+				g.drawImage(cakeImage, cake_X, cake_Y, this);
+			}
 			for (int z = 0; z < dots; z++) {
 				if (z == 0) {
 					g.drawImage(headImage, x[z], y[z], this);
@@ -118,7 +131,7 @@ public class Board extends JPanel implements ActionListener {
 
 	private void gameOver(Graphics g) {
 		String msg = "Game Over";
-		String scoreMsg = "Your Score:" + score;
+		String scoreMsg = "Your Score: " + score;
 		Font small = new Font("Helvetica", Font.BOLD, 14);
 		FontMetrics metr = getFontMetrics(small);
 
@@ -147,7 +160,7 @@ public class Board extends JPanel implements ActionListener {
 			}
 			score += 200;
 			cakeExist = false;
-			placeCake();
+//			placeCake();
 		}
 	}
 
@@ -207,26 +220,26 @@ public class Board extends JPanel implements ActionListener {
 
 	private void placeCake() {
 
-//		if (cakeCounter >= 5) {
-			int cR = (int) (Math.random() * rand_Pos);
-			cake_X = ((cR * dot_Size));
+		// if (cakeCounter >= 5) {
+		int cR = (int) (Math.random() * rand_Pos);
+		cake_X = ((cR * dot_Size));
 
-			cR = (int) (Math.random() * rand_Pos);
-			cake_Y = (cR * dot_Size);
+		cR = (int) (Math.random() * rand_Pos);
+		cake_Y = (cR * dot_Size);
 
-			if (cake_X == apple_X && cake_Y == apple_Y) {
-				placeCake();
-			}
-			cakeCounter = 0;
-			cakeExist = true;
-//		}
+		if (cake_X == apple_X && cake_Y == apple_Y) {
+			placeCake();
+		}
+		cakeCounter = 0;
+		cakeExist = true;
+		// }
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (inGame) {
 			checkApple();
-			checkCake();
+			doCakeStuff();
 
 			checkCollision();
 			move();
@@ -263,8 +276,38 @@ public class Board extends JPanel implements ActionListener {
 				leftDirection = false;
 				rightDirection = false;
 			}
+			
+			if ((key == KeyEvent.VK_SPACE)){
+				if (!paused){
+				paused = true;
+				pause();
+				}
+				else {
+					paused = false;
+				}
+			}
 
 		}
+	}
+
+	private void doCakeStuff() {
+		if (cakeCounter >= 5 && !cakeExist) {
+			placeCake();
+		} else {
+			checkCake();
+		}
+	}
+	
+	private void pause() {
+		while (paused){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 }
