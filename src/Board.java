@@ -102,15 +102,14 @@ public class Board extends JPanel implements ActionListener {
 	private void doDrawing(Graphics g) {
 		if (inGame) {
 			g.drawImage(appleImage, apple_X, apple_Y, this);
-			
-			//To show in game score
+
+			// To show in game score
 			Font smallScore = new Font("Helvetica", Font.BOLD, 14);
 			FontMetrics scoreMetr = getFontMetrics(smallScore);
 			g.setColor(Color.GRAY);
 			String inGameScore = "Your score: " + score;
-			g.drawString(inGameScore, (20),
-					(20));
-			
+			g.drawString(inGameScore, (20), (20));
+
 			//
 			if (cakeExist) {
 				g.drawImage(cakeImage, cake_X, cake_Y, this);
@@ -160,7 +159,7 @@ public class Board extends JPanel implements ActionListener {
 			}
 			score += 200;
 			cakeExist = false;
-//			placeCake();
+			// placeCake();
 		}
 	}
 
@@ -276,16 +275,6 @@ public class Board extends JPanel implements ActionListener {
 				leftDirection = false;
 				rightDirection = false;
 			}
-			
-			if ((key == KeyEvent.VK_SPACE)){
-				if (!paused){
-				paused = true;
-				pause();
-				}
-				else {
-					paused = false;
-				}
-			}
 
 		}
 	}
@@ -297,17 +286,16 @@ public class Board extends JPanel implements ActionListener {
 			checkCake();
 		}
 	}
-	
-	private void pause() {
-		while (paused){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-	}
+
+	// private void pause() {
+	// while (paused){
+	// try{
+	// wait();
+	// }catch (InterruptedException e){
+	//
+	// }
+	// }
+	//
+	// }
 
 }
