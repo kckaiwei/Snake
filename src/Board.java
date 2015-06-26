@@ -31,7 +31,10 @@ public class Board extends JPanel implements ActionListener {
 	private int dots;
 	private int apple_Y;
 	private int apple_X;
+	private int cake_Y;
+	private int cake_X;
 	private int score = 0;
+	private int cakeCounter = 5;
 
 	private Image bodyImage, appleImage, cakeImage, headImage;
 
@@ -40,6 +43,7 @@ public class Board extends JPanel implements ActionListener {
 	private boolean upDirection = false;
 	private boolean downDirection = false;
 	private boolean inGame = true;
+	private boolean cakeExist;
 
 	private Timer timer;
 
@@ -69,6 +73,7 @@ public class Board extends JPanel implements ActionListener {
 		}
 
 		placeApple();
+		placeCake();
 
 		timer = new Timer(delay, this);
 		timer.start();
@@ -96,7 +101,7 @@ public class Board extends JPanel implements ActionListener {
 	private void doDrawing(Graphics g) {
 		if (inGame) {
 			g.drawImage(appleImage, apple_X, apple_Y, this);
-
+			g.drawImage(cakeImage, cake_X, cake_Y, this);
 			for (int z = 0; z < dots; z++) {
 				if (z == 0) {
 					g.drawImage(headImage, x[z], y[z], this);
@@ -130,7 +135,19 @@ public class Board extends JPanel implements ActionListener {
 		if ((x[0] == apple_X) && (y[0] == apple_Y)) {
 			dots++;
 			score += 100;
+			cakeCounter++;
 			placeApple();
+		}
+	}
+
+	private void checkCake() {
+		if ((x[0] == cake_X) && (y[0] == cake_Y)) {
+			if (dots >= 2) {
+				dots--;
+			}
+			score += 200;
+			cakeExist = false;
+			placeCake();
 		}
 	}
 
@@ -188,10 +205,29 @@ public class Board extends JPanel implements ActionListener {
 		apple_Y = ((r * dot_Size));
 	}
 
+	private void placeCake() {
+
+//		if (cakeCounter >= 5) {
+			int cR = (int) (Math.random() * rand_Pos);
+			cake_X = ((cR * dot_Size));
+
+			cR = (int) (Math.random() * rand_Pos);
+			cake_Y = (cR * dot_Size);
+
+			if (cake_X == apple_X && cake_Y == apple_Y) {
+				placeCake();
+			}
+			cakeCounter = 0;
+			cakeExist = true;
+//		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (inGame) {
 			checkApple();
+			checkCake();
+
 			checkCollision();
 			move();
 		}
